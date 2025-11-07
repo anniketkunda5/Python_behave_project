@@ -1,4 +1,7 @@
+from selenium.common import TimeoutException, ElementClickInterceptedException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class BasePage(object):
@@ -25,9 +28,36 @@ class BasePage(object):
             element = self.driver.find_element(By.CSS_SELECTOR, locator_value)
         return element
 
-    def click_on_element(self, locator_type, locator_value):
-        element = self.get_element(locator_type, locator_value)
-        element.click()
+    def click_on_element(self, locator_type, locator_value, timeout=10):
+        try:
+            wait = WebDriverWait(self.driver, timeout)
+            element = wait.until(
+                EC.element_to_be_clickable((self._get_by(locator_type), locator_value))
+            )
+            element.click()
+        except TimeoutException:
+            print(f"[ERROR] Timeout: Element not clickable -> {locator_value}")
+            raise
+        except ElementClickInterceptedException:
+            print(f"[WARNING] Click intercepted, retrying via JavaScript -> {locator_value}")
+            self.driver.execute_script("arguments[0].click();", element)
+
+    def _get_by(self, locator_type):
+        if locator_type.endswith("_id") or locator_type.endswith("_ID"):
+            return By.ID
+        elif locator_type.endswith("_name"):
+            return By.NAME
+        elif locator_type.endswith("_class_name"):
+            return By.CLASS_NAME
+        elif locator_type.endswith("_link_text"):
+            return By.LINK_TEXT
+        elif locator_type.endswith("_xpath") or locator_type.endswith("_XPATH"):
+            return By.XPATH
+        elif locator_type.endswith("_css"):
+            return By.CSS_SELECTOR
+        else:
+            raise ValueError(f"Invalid locator type: {locator_type}")
+
 
     def verify_page_title(self, expected_title):
         return self.driver.title == expected_title
