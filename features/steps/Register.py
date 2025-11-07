@@ -28,6 +28,7 @@ def step_impl(context):
 
 @when(u'I click on Continue button')
 def step_impl(context):
+    time.sleep(1)
     context.account_page=context.register_page.register_continue_button()
 
 @then(u'Account should get created')

@@ -24,6 +24,7 @@ def step_impl(context):
 
 @then(u'I should got logged in')
 def step_impl(context):
+    time.sleep(1)
     assert context.account_page.display_status_of_edit_your_account_info_page()
 
 @when(u'I enter valid email address as "{email}" and invalid password as "{password}" into the fields')

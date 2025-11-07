@@ -3,23 +3,18 @@ from allure_behave.utils import step_status
 from allure_commons.types import AttachmentType
 from selenium import webdriver
 from utilities import ConfigReader
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.firefox import GeckoDriverManager
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
-
-def before_scenario(context, scenario):
-    browser_name = ConfigReader.read_configuration("basic info", "browser").lower()
+def before_scenario(context,driver):
+    browser_name = ConfigReader.read_configuration("basic info","browser").lower()
     if browser_name == "chrome":
-        context.driver = webdriver.Chrome(ChromeDriverManager().install())
-    elif browser_name == "firefox":
-        context.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
-    elif browser_name == "edge":
-        context.driver = webdriver.Edge(EdgeChromiumDriverManager().install())
-    else:
-        raise ValueError(f"Unsupported browser: {browser_name}")
+        context.driver = webdriver.Chrome()
+    if browser_name.__eq__("firefox"):
+        context.driver = webdriver.Firefox()
+    if browser_name.__eq__("edge"):
+        context.driver = webdriver.Edge()
     context.driver.maximize_window()
-    context.driver.get(ConfigReader.read_configuration("basic info", "url"))
+    context.driver.get(ConfigReader.read_configuration("basic info","url"))
+
     context.driver.refresh()
 
 def after_scenario(context,driver):
