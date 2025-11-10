@@ -9,7 +9,7 @@ Feature:Login Functionality
       |email                 |password             |
       |a.kunda@gmail.com     |anniket123|
       |kunda@gmail.com       |12345|
-      #|a.kunda@gmail.com     |jbhshkduiwg|
+      |a.kunda@gmail.com     |jbhshkduiwg|
   @Login @login2
   Scenario: Login with valid mail and invalid password
     Given I navigated to the login page
